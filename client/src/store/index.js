@@ -26,6 +26,7 @@ export const GlobalStoreActionType = {
     CREATE_NEW_LIST: "CREATE_NEW_LIST",
     LOAD_ID_NAME_PAIRS: "LOAD_ID_NAME_PAIRS",
     MARK_LIST_FOR_DELETION: "MARK_LIST_FOR_DELETION",
+    UNMARK_LIST_FOR_DELETION: "UNMARK_LIST_FOR_DELETION",
     SET_CURRENT_LIST: "SET_CURRENT_LIST",
     SET_LIST_NAME_EDIT_ACTIVE: "SET_LIST_NAME_EDIT_ACTIVE",
     EDIT_SONG: "EDIT_SONG",
@@ -139,6 +140,19 @@ function GlobalStoreContextProvider(props) {
                     listNameActive: false,
                     listIdMarkedForDeletion: payload.id,
                     listMarkedForDeletion: payload.playlist
+                });
+            }
+            case GlobalStoreActionType.UNMARK_LIST_FOR_DELETION: {
+                return setStore({
+                    currentModal : CurrentModal.DELETE_LIST,
+                    idNamePairs: store.idNamePairs,
+                    currentList: null,
+                    currentSongIndex: -1,
+                    currentSong: null,
+                    newListCounter: store.newListCounter,
+                    listNameActive: false,
+                    listIdMarkedForDeletion: null,
+                    listMarkedForDeletion: null
                 });
             }
             // UPDATE A LIST
@@ -331,6 +345,12 @@ function GlobalStoreContextProvider(props) {
         store.deleteList(store.listIdMarkedForDeletion);
         store.hideModals();
     }
+    store.unmarkListForDeletion = function () {
+        storeReducer({
+            type: GlobalStoreActionType.UNMARK_LIST_FOR_DELETION
+        });
+        store.hideModals();
+    }
     // THIS FUNCTION SHOWS THE MODAL FOR PROMPTING THE USER
     // TO SEE IF THEY REALLY WANT TO DELETE THE LIST
 
@@ -510,6 +530,9 @@ function GlobalStoreContextProvider(props) {
     }
     store.canClose = function() {
         return (store.currentList !== null);
+    }
+    store.clearTransactions = function() {
+        tps.clearAllTransactions();
     }
 
     // THIS FUNCTION ENABLES THE PROCESS OF EDITING A LIST NAME
