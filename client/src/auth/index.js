@@ -10,13 +10,16 @@ export const AuthActionType = {
     GET_LOGGED_IN: "GET_LOGGED_IN",
     LOGIN_USER: "LOGIN_USER",
     LOGOUT_USER: "LOGOUT_USER",
-    REGISTER_USER: "REGISTER_USER"
+    REGISTER_USER: "REGISTER_USER",
+    SHOW_ERROR: "SHOW_ERROR",
+    HIDE_ERROR: "HIDE_ERROR"
 }
 
 function AuthContextProvider(props) {
     const [auth, setAuth] = useState({
         user: null,
-        loggedIn: false
+        loggedIn: false,
+        error: null
     });
     const history = useHistory();
 
@@ -51,6 +54,20 @@ function AuthContextProvider(props) {
                     loggedIn: true
                 })
             }
+            case AuthActionType.SHOW_ERROR: {
+                return setAuth({
+                    user: auth.user,
+                    loggedIn: payload.loggedIn,
+                    error: payload.error
+                })
+            }
+            case AuthActionType.HIDE_ERROR: {
+                return setAuth({
+                    user: auth.user,
+                    loggedIn: auth.loggedIn,
+                    error: null
+                })
+            }
             default:
                 return auth;
         }
@@ -70,29 +87,61 @@ function AuthContextProvider(props) {
     }
 
     auth.registerUser = async function(firstName, lastName, email, password, passwordVerify) {
-        const response = await api.registerUser(firstName, lastName, email, password, passwordVerify);      
-        if (response.status === 200) {
+        try {
+            const response = await api.registerUser(firstName, lastName, email, password, passwordVerify);
+            if (response.status === 200) {
+                authReducer({
+                    type: AuthActionType.REGISTER_USER,
+                    payload: {
+                        user: response.data.user
+                    }
+                })
+                history.push("/");
+            }
+            return true;
+        }
+        catch(error){
+            console.log("Register failed. Error message: ", error.response.data.errorMessage);
             authReducer({
-                type: AuthActionType.REGISTER_USER,
+                type: AuthActionType.SHOW_ERROR,
                 payload: {
-                    user: response.data.user
+                    loggedIn: false,
+                    error: error.response.data.errorMessage
                 }
             })
-            history.push("/");
+            return false;
         }
     }
 
     auth.loginUser = async function(email, password) {
-        const response = await api.loginUser(email, password);
-        if (response.status === 200) {
+        try {
+            const response = await api.loginUser(email, password);
+            if (response.status === 200) {
+                authReducer({
+                    type: AuthActionType.LOGIN_USER,
+                    payload: {
+                        user: response.data.user
+                    }
+                })
+                history.push("/");
+            }
+        }
+        catch(error){
+            console.log("Login failed. Error message: ", error.response.data.errorMessage);
             authReducer({
-                type: AuthActionType.LOGIN_USER,
+                type: AuthActionType.SHOW_ERROR,
                 payload: {
-                    user: response.data.user
+                    loggedIn: false,
+                    error: error.response.data.errorMessage
                 }
             })
-            history.push("/");
         }
+    }
+
+    auth.closeErrorModal = function() {
+        authReducer({
+            type: AuthActionType.HIDE_ERROR
+        })
     }
 
     auth.logoutUser = async function() {

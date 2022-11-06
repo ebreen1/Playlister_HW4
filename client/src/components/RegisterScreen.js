@@ -10,6 +10,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 import Grid from '@mui/material/Grid';
 import Link from '@mui/material/Link';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import MUIErrorModal from './MUIErrorModal';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
@@ -25,11 +26,14 @@ export default function RegisterScreen() {
             formData.get('email'),
             formData.get('password'),
             formData.get('passwordVerify')
-        );
-        auth.loginUser(
-            formData.get('email'),
-            formData.get('password')
-        );
+        )
+        /* Logs the user in if registering was successful */
+        if(auth.loggedIn) {
+            auth.loginUser(
+                formData.get('email'),
+                formData.get('password')
+            );
+        }
     };
 
     return (
@@ -123,6 +127,7 @@ export default function RegisterScreen() {
                     </Box>
                 </Box>
                 <Copyright sx={{ mt: 5 }} />
+                <MUIErrorModal />
             </Container>
     );
 }
