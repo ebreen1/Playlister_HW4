@@ -33,25 +33,29 @@ function AuthContextProvider(props) {
             case AuthActionType.GET_LOGGED_IN: {
                 return setAuth({
                     user: payload.user,
-                    loggedIn: payload.loggedIn
+                    loggedIn: payload.loggedIn,
+                    error: auth.error
                 });
             }
             case AuthActionType.LOGIN_USER: {
                 return setAuth({
                     user: payload.user,
-                    loggedIn: true
+                    loggedIn: true,
+                    error: auth.error
                 })
             }
             case AuthActionType.LOGOUT_USER: {
                 return setAuth({
                     user: null,
-                    loggedIn: false
+                    loggedIn: false,
+                    error: auth.error
                 })
             }
             case AuthActionType.REGISTER_USER: {
                 return setAuth({
                     user: payload.user,
-                    loggedIn: true
+                    loggedIn: true,
+                    error: auth.error
                 })
             }
             case AuthActionType.SHOW_ERROR: {
