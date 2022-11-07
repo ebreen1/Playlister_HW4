@@ -49,7 +49,7 @@ export default function MUIEditSongModal() {
 
     return (
         <Modal
-            open={store.editingSong}
+            open={store.isEditSongModalOpen()}
         >
             <Box sx={style}>
             <div

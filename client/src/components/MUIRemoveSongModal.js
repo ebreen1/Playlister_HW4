@@ -38,7 +38,7 @@ export default function MUIRemoveSongModal() {
 
     return (
         <Modal
-            open={store.deletingSong}
+            open={store.isRemoveSongModalOpen()}
         >
             <Box sx={style}>
             <div
