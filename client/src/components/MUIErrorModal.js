@@ -3,6 +3,7 @@ import AuthContext from '../auth'
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
+import Alert from '@mui/material/Alert';
 
 const style = {
     position: 'absolute',
@@ -34,7 +35,7 @@ export default function MUIErrorModal() {
                     </div>
                     <div className="modal-center">
                         <div className="modal-center-content">
-                            {auth.error}
+                            <Alert severity="warning">{auth.error}</Alert>
                         </div>
                     </div>
                 <div className = "modal-south">
